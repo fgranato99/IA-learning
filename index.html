@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Learning Diary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7f6 0%, #e8f1f0 100%);
+            color: #1a1a1a;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0B5345 0%, #1B7355 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 24px rgba(11, 83, 69, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: white;
+            border: 2px solid #2D6A4F;
+            color: #2D6A4F;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #2D6A4F;
+            color: white;
+        }
+        
+        .entries-container {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .entry {
+            background: white;
+            border-left: 5px solid #2D6A4F;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .entry:hover {
+            box-shadow: 0 8px 24px rgba(11, 83, 69, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .entry-date {
+            background: #0B5345;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .entry-title {
+            font-size: 1.4em;
+            color: #0B5345;
+            font-weight: 700;
+            margin: 10px 0;
+            line-height: 1.3;
+        }
+        
+        .entry-content {
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+        
+        .entry-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .meta-item {
+            font-size: 0.95em;
+        }
+        
+        .meta-label {
+            color: #2D6A4F;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .meta-value {
+            color: #555;
+        }
+        
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tool-badge {
+            background: #f0f5f3;
+            border: 1px solid #2D6A4F;
+            color: #0B5345;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tag {
+            background: linear-gradient(135deg, #e8f5f0 0%, #d4ebe7 100%);
+            color: #0B5345;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tag:hover {
+            background: linear-gradient(135deg, #2D6A4F 0%, #0B5345 100%);
+            color: white;
+        }
+        
+        .entry-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #2D6A4F;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: #f0f5f3;
+            transition: all 0.2s ease;
+        }
+        
+        .entry-link:hover {
+            background: #2D6A4F;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 1.1em;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .entry-header {
+                flex-direction: column;
+            }
+            
+            .entry-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 IA Learning Diary</h1>
+            <p>Rastreando exploração, descobertas e padrões em IA. Ferramentas, prompts, e aprendizados práticos.</p>
+        </div>
+        
+        <div class="filters" id="filters"></div>
+        
+        <div class="entries-container" id="entries"></div>
+        
+        <div class="empty-state" id="empty-state" style="display: none;">
+            Nenhuma entrada encontrada.
+        </div>
+    </div>
+
+    <script>
+        // AQUI VOCÊ ADICIONA SUAS ENTRADAS
+        // Copie e cole essa estrutura pra adicionar novas:
+        const entries = [
+            {
+                date: "2026-06-28",
+                title: "Dia 1 — Começando o Diário",
+                content: "Criando meu sistema de rastreamento de aprendizado em IA. Objetivo: documentar ferramentas, prompts úteis e descobertas práticas para não perder conhecimento.",
+                tools: ["GitHub", "Claude"],
+                link: "https://github.com/fgranato99/ia-learning",
+                tags: ["setup", "documentação"]
+            },
+            {
+                date: "2026-06-29",
+                title: "Claude Vision — Análise de Imagens",
+                content: "Testei o recurso de visão do Claude para análise de screenshots de UI/UX. Funciona muito bem para identificar padrões de design e problemas de usabilidade.",
+                tools: ["Claude", "Vision API"],
+                link: "https://claude.ai",
+                tags: ["claude", "vision", "design", "produto"]
+            },
+            {
+                date: "2026-06-30",
+                title: "Prompts Efetivos — Padrão de Análise",
+                content: "Descobri que estruturar prompts com 'contexto → tarefa → formato esperado' gera resultados muito mais consistentes. Aplicável em análises de mercado imobiliário.",
+                tools: ["Claude", "Prompting"],
+                link: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview",
+                tags: ["prompting", "padrões", "técnica"]
+            }
+        ];
+
+        // Renderizar
+        const container = document.getElementById('entries');
+        const filtersContainer = document.getElementById('filters');
+        let activeFilter = null;
+
+        // Extrair todas as tags
+        const allTags = [...new Set(entries.flatMap(e => e.tags))];
+
+        // Criar botões de filtro
+        const filterAll = document.createElement('button');
+        filterAll.className = 'filter-btn active';
+        filterAll.textContent = 'Todas';
+        filterAll.onclick = () => {
+            activeFilter = null;
+            filterAll.classList.add('active');
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn !== filterAll) btn.classList.remove('active');
+            });
+            render();
+        };
+        filtersContainer.appendChild(filterAll);
+
+        allTags.forEach(tag => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.textContent = tag;
+            btn.onclick = () => {
+                activeFilter = tag;
+                filterAll.classList.remove('active');
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.toggle('active', b === btn);
+                });
+                render();
+            };
+            filtersContainer.appendChild(btn);
+        });
+
+        function render() {
+            container.innerHTML = '';
+            
+            // Filtrar
+            let filtered = entries;
+            if (activeFilter) {
+                filtered = entries.filter(e => e.tags.includes(activeFilter));
+            }
+
+            // Ordenar por data (mais recente primeiro)
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (filtered.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+                return;
+            }
+            document.getElementById('empty-state').style.display = 'none';
+
+            filtered.forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'entry';
+                
+                let tagsHtml = entry.tags.map(tag => 
+                    `<span class="tag" onclick="filterByTag('${tag}')">${tag}</span>`
+                ).join('');
+                
+                let toolsHtml = entry.tools.map(tool => 
+                    `<span class="tool-badge">${tool}</span>`
+                ).join('');
+                
+                let linkHtml = entry.link ? 
+                    `<a href="${entry.link}" target="_blank" class="entry-link">Ver mais →</a>` : 
+                    '';
+
+                div.innerHTML = `
+                    <div class="entry-header">
+                        <span class="entry-date">${entry.date}</span>
+                    </div>
+                    <div class="entry-title">${entry.title}</div>
+                    <div class="entry-content">${entry.content}</div>
+                    
+                    <div class="entry-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Ferramentas</span>
+                            <div class="tools">${toolsHtml}</div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Tags</span>
+                            <div class="tags">${tagsHtml}</div>
+                        </div>
+                    </div>
+                    
+                    ${linkHtml}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterByTag(tag) {
+            activeFilter = tag;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === tag);
+            });
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>
